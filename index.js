@@ -1,24 +1,23 @@
 const config = require('./utils/config')
+const Blog = require('./models/blog')
 const http = require('http')
 const express = require('express')
 const app = express()
 const cors = require('cors')
 const mongoose = require('mongoose')
+const logger = require('./utils/logger')
 
-const blogSchema = new mongoose.Schema({
-    title: String,
-    author: String,
-    url: String,
-    likes: Number
-})
-
-const Blog = mongoose.model('Blog', blogSchema)
-
-mongoose.connect(
-    config.MONGODB_URI,
-    { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true }
-)
-// TODO: log connected to MongoDB or not
+mongoose
+    .connect(
+        config.MONGODB_URI,
+        { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true }
+    )
+    .then(() => {
+        logger.info('Connected to MongoDB')
+    })
+    .catch(error => {
+        logger.error('Error connecting to MongoDB', error.message)
+    })
 
 app.use(cors())
 app.use(express.json())
