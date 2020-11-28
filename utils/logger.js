@@ -1,5 +1,7 @@
 const info = (...data) => {
-    console.log(...data)
+    if (process.env.NODE_ENV !== 'test'){
+        console.log(...data)
+    }
 }
 
 const error = (...data) => {
