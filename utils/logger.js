@@ -5,7 +5,9 @@ const info = (...data) => {
 }
 
 const error = (...data) => {
-    console.error(...data)
+    if (process.env.NODE_ENV !== 'test'){
+        console.error(...data)
+    }
 }
 
 module.exports = {
