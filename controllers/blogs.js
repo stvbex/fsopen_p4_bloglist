@@ -57,7 +57,17 @@ blogsRouter.post('/', async (request, response) => {
 
     // Ensure title & author are not missing
     if (newBlogData.title && newBlogData.author) {
-        const createdBlog = await Blog.create(newBlogData)
+        let createdBlog = await Blog
+            .create(newBlogData)
+        
+        createdBlog = await createdBlog
+            .populate('user', {
+                username: 1,
+                name: 1,
+                id: 1
+            })
+            .execPopulate()
+        
         creator.blogs = creator.blogs.concat(createdBlog._id)
         await creator.save()
 
@@ -78,11 +88,17 @@ blogsRouter.put('/:id', async (request, response) => {
         likes: body.likes
     }
 
-    const updatedBlog = await Blog.findByIdAndUpdate(
-        request.params.id,
-        newBlog,
-        { new: true }
-    )
+    const updatedBlog = await Blog
+        .findByIdAndUpdate(
+            request.params.id,
+            newBlog,
+            { new: true }
+        )
+        .populate('user', {
+            username: 1,
+            name: 1,
+            id: 1
+        })
 
     response.json(updatedBlog)
 })
