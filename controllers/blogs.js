@@ -123,8 +123,14 @@ blogsRouter.delete('/:id', async (request, response) => {
     return response.status(401).end()
   }
 
+  // Delete blog
   await Blog.findByIdAndDelete(request.params.id)
-  // TODO: delete blogs from Users too !!!
+
+  // Delete from user's blogs
+  const creator = await User.findById(decodedToken.id)
+  creator.blogs = creator.blogs.filter(blogId => blogId !== request.params.id)
+  await creator.save()
+
   response.status(204).end()
 })
 
